@@ -52,44 +52,63 @@ const average = (arr) =>
 
 export default function App() {
 	const [movies, setMovies] = useState(tempMovieData);
+
 	function Navbar() {
-		const [query, setQuery] = useState("");
 		return (
 			<nav className="nav-bar">
-				<div className="logo">
-					<span role="img">🍿</span>
-					<h1>usePopcorn</h1>
-				</div>
-				<input
-					className="search"
-					type="text"
-					placeholder="Search movies..."
-					value={query}
-					onChange={(e) => setQuery(e.target.value)}
-				/>
-				<p className="num-results">
-					Found <strong>{movies.length}</strong> results
-				</p>
+				<Logo />
+				<SearchBar />
+				<SearchResult />
 			</nav>
 		);
 	}
-	function Main() {
+
+	function Logo() {
+		return (
+			<div className="logo">
+				<span role="img">🍿</span>
+				<h1>usePopcorn</h1>
+			</div>
+		);
+	}
+
+	function SearchBar() {
+		const [query, setQuery] = useState("");
+		return (
+			<input
+				className="search"
+				type="text"
+				placeholder="Search movies..."
+				value={query}
+				onChange={(e) => setQuery(e.target.value)}
+			/>
+		);
+	}
+
+	function SearchResult() {
+		return (
+			<p className="num-results">
+				Found <strong>x</strong> results
+			</p>
+		);
+	}
+	function Main({ movies }) {
 		return (
 			<main className="main">
-				<ListBox />;
+				<ListBox movies={movies} />;
 				<WatchedList />
 			</main>
 		);
 	}
 	return (
 		<>
-			<Navbar movies={movies} />
-			<Main />
+			<Navbar movie />
+			<Main movies={movies} />
 		</>
 	);
 }
 
-function ListBox() {
+function ListBox({ movies }) {
 	const [isOpen1, setIsOpen1] = useState(true);
 
 	return (
@@ -100,7 +119,7 @@ function ListBox() {
 			>
 				{isOpen1 ? "–" : "+"}
 			</button>
-			{isOpen1 && <MovieList />}
+			{isOpen1 && <MovieList movies={movies} />}
 		</div>
 	);
 }
