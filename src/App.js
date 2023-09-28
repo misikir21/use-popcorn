@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Children, useState } from "react";
 
 const tempMovieData = [
 	{
@@ -52,77 +52,100 @@ const average = (arr) =>
 
 export default function App() {
 	const [movies, setMovies] = useState(tempMovieData);
-
-	function Navbar() {
-		return (
-			<nav className="nav-bar">
-				<Logo />
-				<SearchBar />
-				<SearchResult />
-			</nav>
-		);
-	}
-
-	function Logo() {
-		return (
-			<div className="logo">
-				<span role="img">🍿</span>
-				<h1>usePopcorn</h1>
-			</div>
-		);
-	}
-
-	function SearchBar() {
-		const [query, setQuery] = useState("");
-		return (
-			<input
-				className="search"
-				type="text"
-				placeholder="Search movies..."
-				value={query}
-				onChange={(e) => setQuery(e.target.value)}
-			/>
-		);
-	}
-
-	function SearchResult() {
-		return (
-			<p className="num-results">
-				Found <strong>x</strong> results
-			</p>
-		);
-	}
-	function Main({ movies }) {
-		return (
-			<main className="main">
-				<ListBox movies={movies} />;
-				<WatchedList />
-			</main>
-		);
-	}
+	const [watched, setWatched] = useState(tempWatchedData);
 	return (
 		<>
-			<Navbar movie />
-			<Main movies={movies} />
+			<Navbar>
+				<Logo />
+				<SearchBar />
+				<SearchResult movies={movies} />
+			</Navbar>
+			<Main>
+				<Box>
+					<MovieList movies={movies} />
+				</Box>
+				<Box>
+					<>
+						<Watchedsummary watched={watched} />
+						<Watched watched={watched} />
+					</>
+				</Box>
+			</Main>
 		</>
 	);
 }
 
-function ListBox({ movies }) {
-	const [isOpen1, setIsOpen1] = useState(true);
+function Navbar({ children }) {
+	return <nav className="nav-bar">{children}</nav>;
+}
+
+function Logo() {
+	return (
+		<div className="logo">
+			<span role="img">🍿</span>
+			<h1>usePopcorn</h1>
+		</div>
+	);
+}
+
+function SearchBar() {
+	const [query, setQuery] = useState("");
+	return (
+		<input
+			className="search"
+			type="text"
+			placeholder="Search movies..."
+			value={query}
+			onChange={(e) => setQuery(e.target.value)}
+		/>
+	);
+}
+
+function SearchResult({ movies }) {
+	return (
+		<p className="num-results">
+			Found <strong>{movies.length}</strong> results
+		</p>
+	);
+}
+function Main({ children }) {
+	return <main className="main">{children}</main>;
+}
+
+function Box({ children }) {
+	const [isOpen, setIsOpen] = useState(true);
+
+	return (
+		<div className="box">
+			<button className="btn-toggle" onClick={() => setIsOpen((open) => !open)}>
+				{isOpen ? "–" : "+"}
+			</button>
+			{isOpen && children}
+		</div>
+	);
+}
+
+/*function WatchedList() {
+	const [watched, setWatched] = useState(tempWatchedData);
+	const [isOpen2, setIsOpen2] = useState(true);
 
 	return (
 		<div className="box">
 			<button
 				className="btn-toggle"
-				onClick={() => setIsOpen1((open) => !open)}
+				onClick={() => setIsOpen2((open) => !open)}
 			>
-				{isOpen1 ? "–" : "+"}
+				{isOpen2 ? "–" : "+"}
 			</button>
-			{isOpen1 && <MovieList movies={movies} />}
+			{isOpen2 && (
+				<>
+					<Watchedsummary watched={watched} />
+					<Watched watched={watched} />
+				</>
+			)}
 		</div>
 	);
-}
+}*/
 function MovieList({ movies }) {
 	return (
 		<ul className="list">
@@ -145,27 +168,6 @@ function Movie({ movie }) {
 				</p>
 			</div>
 		</li>
-	);
-}
-function WatchedList() {
-	const [watched, setWatched] = useState(tempWatchedData);
-	const [isOpen2, setIsOpen2] = useState(true);
-
-	return (
-		<div className="box">
-			<button
-				className="btn-toggle"
-				onClick={() => setIsOpen2((open) => !open)}
-			>
-				{isOpen2 ? "–" : "+"}
-			</button>
-			{isOpen2 && (
-				<>
-					<Watchedsummary watched={watched} />
-					<Watched watched={watched} />
-				</>
-			)}
-		</div>
 	);
 }
 
